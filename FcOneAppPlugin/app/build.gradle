@@ -1,0 +1,51 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+            }
+            aidl {
+                srcDir 'src/main/aidl'
+            }
+        }
+    }
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 22
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:22.+'
+    compile files('libs/fb-classes.jar')
+    compile files('libs/unity-classes.jar')
+}
+
+//task to delete the old jar
+task deleteOldJar(type: Delete) {
+    delete 'release/FcOneAppActivity.jar'
+}
+
+//task to export contents as jar
+task _ExportJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('../../../UnityProject/FairyTaleSlots/Assets/Plugins/Android/')
+    include('classes.jar')
+    ///Rename the jar
+    rename('classes.jar', 'FcOneAppActivity.jar')
+}
+
+_ExportJar.dependsOn(deleteOldJar, build)
