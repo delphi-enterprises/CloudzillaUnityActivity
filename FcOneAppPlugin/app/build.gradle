@@ -35,17 +35,30 @@ dependencies {
 }
 
 //task to delete the old jar
+task deleteOldJarFromGame(type: Delete) {
+    delete '../../../FairyTaleSlots/UnityProject/FairyTaleSlots/Assets/Plugins/Android/FcOneAppActivity.jar'
+}
+
 task deleteOldJar(type: Delete) {
     delete 'release/FcOneAppActivity.jar'
 }
 
 //task to export contents as jar
-task _ExportJar(type: Copy) {
+task _ExportJarIntoGame(type: Copy) {
     from('build/intermediates/bundles/release/')
-    into('../../../UnityProject/FairyTaleSlots/Assets/Plugins/Android/')
+    into('../../../FairyTaleSlots/UnityProject/FairyTaleSlots/Assets/Plugins/Android/')
     include('classes.jar')
     ///Rename the jar
     rename('classes.jar', 'FcOneAppActivity.jar')
 }
 
+task _ExportJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('release/')
+    include('classes.jar')
+    ///Rename the jar
+    rename('classes.jar', 'FcOneAppActivity.jar')
+}
+
+_ExportJarIntoGame.dependsOn(deleteOldJarFromGame, build)
 _ExportJar.dependsOn(deleteOldJar, build)
